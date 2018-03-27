@@ -6,7 +6,7 @@ var options = {
   key: fs.readFileSync('./fake-keys/privatekey.pem'),
   cert: fs.readFileSync('./fake-keys/certificate.pem')
 };
-var serverPort = (process.env.PORT  || 4443);
+var serverPort = (process.env.PORT || 4443);
 var https = require('https');
 var http = require('http');
 var server;
@@ -19,14 +19,15 @@ var io = require('socket.io')(server);
 
 var roomList = {};
 
-app.get('/', function(req, res){
+app.get('/', function (req, res) {
   console.log('get /');
   res.sendFile(__dirname + '/index.html');
 });
-server.listen(serverPort, function(){
+server.listen(serverPort, function () {
   console.log('server up and running at %s port', serverPort);
   if (process.env.LOCAL) {
-    open('http://localhost:' + serverPort)
+    // open('http://localhost:' + serverPort)
+    open('https://vin-conference-native.herokuapp.com/')
   }
 });
 
@@ -43,9 +44,9 @@ function socketIdsInRoom(name) {
   }
 }
 
-io.on('connection', function(socket){
+io.on('connection', function (socket) {
   console.log('connection');
-  socket.on('disconnect', function(){
+  socket.on('disconnect', function () {
     console.log('disconnect');
     if (socket.room) {
       var room = socket.room;
@@ -54,7 +55,7 @@ io.on('connection', function(socket){
     }
   });
 
-  socket.on('join', function(name, callback){
+  socket.on('join', function (name, callback) {
     console.log('join', name);
     var socketIds = socketIdsInRoom(name);
     callback(socketIds);
@@ -63,7 +64,7 @@ io.on('connection', function(socket){
   });
 
 
-  socket.on('exchange', function(data){
+  socket.on('exchange', function (data) {
     console.log('exchange', data);
     data.from = socket.id;
     var to = io.sockets.connected[data.to];
